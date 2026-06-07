@@ -55,5 +55,7 @@
 	<string>O Pinless precisa acessar sua galeria para você escolher fotos dos seus momentos.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>O Pinless usa sua localização para marcar onde a foto foi tirada.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>O Pinless precisa da localização para funcionar em segundo plano e marcar suas fotos.</string>
 </dict>
 </plist>
