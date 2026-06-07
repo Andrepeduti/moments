@@ -30,6 +30,7 @@ workflows:
           # O CodeMagic vai usar a integracao app_store_connect automaticamente
           app-store-connect fetch-signing-files "$BUNDLE_ID" \
             --type IOS_APP_STORE \
+            --certificate-key @env:CERTIFICATE_PRIVATE_KEY \
             --create
       - name: Adicionar certificados ao Keychain
         script: keychain add-certificates
