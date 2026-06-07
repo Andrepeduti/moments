@@ -1,0 +1,50 @@
+workflows:
+  ios-release:
+    name: iOS Release (App Store / TestFlight)
+    max_build_duration: 60
+    instance_type: mac_mini_m1
+    environment:
+      node: latest
+      xcode: latest
+      cocoapods: default
+      groups:
+        # Você deve criar um Variable Group no CodeMagic chamado 'apple_credentials'
+        # e conectar a sua App Store Connect API Key.
+        - apple_credentials
+    scripts:
+      - name: Instalar dependências Node (Frontend)
+        script: |
+          cd mobile
+          npm install
+      - name: Build do Angular (Produção)
+        script: |
+          cd mobile
+          npm run build
+      - name: Sincronizar Capacitor iOS
+        script: |
+          cd mobile
+          npx cap sync ios
+      - name: Configurar Assinatura (Code Signing)
+        script: |
+          # O CodeMagic vai baixar os certificados de produção da Apple automaticamente
+          app-store-connect fetch-signing-files "$(xcode-project detect-bundle-id)" --type IOS_APP_STORE --create
+      - name: Set up keychain
+        script: |
+          keychain initialize
+          keychain add-certificates
+      - name: Build iOS (Gerar .ipa)
+        script: |
+          cd mobile/ios/App
+          # Usando o xcode-project cli builder integrado do CodeMagic
+          xcode-project build-ipa \
+            --workspace App.xcworkspace \
+            --scheme App \
+            --config Release
+    artifacts:
+      - mobile/ios/App/build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+    publishing:
+      app_store_connect:
+        # Envia diretamente para o TestFlight assim que o build terminar
+        auth: integration
+        submit_to_testflight: true

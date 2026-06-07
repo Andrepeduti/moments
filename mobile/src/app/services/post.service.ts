@@ -1,3 +1,4 @@
+import { environment } from '../../environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
@@ -5,7 +6,7 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root'
 })
 export class PostService {
-  private apiUrl = 'http://localhost:5106/api/posts';
+  private apiUrl = `${environment.apiUrl}/posts`;
 
   constructor(private http: HttpClient) {}
 

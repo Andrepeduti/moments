@@ -1,3 +1,4 @@
+import { environment } from '../../environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, tap } from 'rxjs';
@@ -6,7 +7,7 @@ import { BehaviorSubject, tap } from 'rxjs';
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:5106/api/auth';
+  private apiUrl = `${environment.apiUrl}/auth`;
   private tokenSubject = new BehaviorSubject<string | null>(localStorage.getItem('token'));
   public token$ = this.tokenSubject.asObservable();
 

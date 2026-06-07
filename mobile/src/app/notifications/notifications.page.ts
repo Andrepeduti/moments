@@ -1,3 +1,4 @@
+import { environment } from '../../environments/environment';
 import { Component } from '@angular/core';
 import { FriendService } from '../services/friend.service';
 import { ToastController } from '@ionic/angular';
@@ -60,6 +61,6 @@ export class NotificationsPage {
   getProfileImageUrl(url: string | undefined): string {
     if (!url) return 'https://i.pravatar.cc/150?img=11';
     if (url.startsWith('http')) return url;
-    return `http://localhost:5106${url}`;
+    return `${environment.baseUrl}${url}`;
   }
 }

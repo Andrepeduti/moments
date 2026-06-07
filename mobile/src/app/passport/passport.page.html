@@ -168,7 +168,7 @@
             <div *ngFor="let photo of getPhotosForState(state.id, selectedCountry?.photos)" class="photo-item"
               (click)="expandImage(photo)">
               <img
-                [src]="photo.imageUrl ? 'http://localhost:5106' + photo.imageUrl : 'https://picsum.photos/150/150?random=' + photo.id" />
+                [src]="photo.imageUrl ? getImageUrl(photo.imageUrl) : 'https://picsum.photos/150/150?random=' + photo.id" />
               <div class="photo-location">{{ photo.locationName }}</div>
             </div>
           </div>

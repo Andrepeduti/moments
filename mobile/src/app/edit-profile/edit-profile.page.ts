@@ -1,3 +1,4 @@
+import { environment } from '../../environments/environment';
 import { Component, OnInit } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { ProfileService } from '../services/profile.service';
@@ -83,7 +84,7 @@ export class EditProfilePage implements OnInit {
   getImageUrl(url: string) {
     if (!url) return 'https://ionicframework.com/docs/img/demos/avatar.svg';
     if (url.startsWith('http')) return url;
-    return `http://localhost:5106${url}`;
+    return `${environment.baseUrl}${url}`;
   }
 
   onFileSelected(event: any) {

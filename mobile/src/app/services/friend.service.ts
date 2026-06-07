@@ -1,3 +1,4 @@
+import { environment } from '../../environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, tap } from 'rxjs';
@@ -6,7 +7,7 @@ import { BehaviorSubject, tap } from 'rxjs';
   providedIn: 'root'
 })
 export class FriendService {
-  private apiUrl = 'http://localhost:5106/api/friends';
+  private apiUrl = `${environment.apiUrl}/friends`;
 
   // Stream reativo com a contagem de solicitações pendentes
   private pendingCountSubject = new BehaviorSubject<number>(0);

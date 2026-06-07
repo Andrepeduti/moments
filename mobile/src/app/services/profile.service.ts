@@ -1,3 +1,4 @@
+import { environment } from '../../environments/environment';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
@@ -7,7 +8,7 @@ import { AuthService } from './auth.service';
   providedIn: 'root'
 })
 export class ProfileService {
-  private apiUrl = 'http://localhost:5106/api/users';
+  private apiUrl = `${environment.apiUrl}/users`;
 
   private profileObj: any = {
     name: '...',

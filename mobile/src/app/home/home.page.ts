@@ -1,3 +1,4 @@
+import { environment } from '../../environments/environment';
 import { Component, OnDestroy } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { PostService } from '../services/post.service';
@@ -97,7 +98,7 @@ export class HomePage implements OnDestroy {
   getImageUrl(url: string) {
     if (!url) return 'https://ionicframework.com/docs/img/demos/avatar.svg';
     if (url.startsWith('http')) return url;
-    return `http://localhost:5106${url}`;
+    return `${environment.baseUrl}${url}`;
   }
 
   getMapUrl(post: any): string {

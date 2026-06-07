@@ -1,3 +1,4 @@
+import { environment } from '../../environments/environment';
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { filter, take } from 'rxjs/operators';
@@ -111,7 +112,7 @@ export class PassportPage {
   getImageUrl(url: string) {
     if (!url) return 'https://ionicframework.com/docs/img/demos/avatar.svg';
     if (url.startsWith('http')) return url;
-    return `http://localhost:5106${url}`;
+    return `${environment.baseUrl}${url}`;
   }
 
   getOriginFlagUrl(countryCode: string | null): string | null {
@@ -278,6 +279,6 @@ export class PassportPage {
   }
 
   expandImage(photo: any) {
-    this.expandedImageUrl = photo.imageUrl ? 'http://localhost:5106' + photo.imageUrl : 'https://picsum.photos/400/500?random=' + photo.id;
+    this.expandedImageUrl = photo.imageUrl ? '${environment.baseUrl}' + photo.imageUrl : 'https://picsum.photos/400/500?random=' + photo.id;
   }
 }

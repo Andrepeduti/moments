@@ -35,7 +35,7 @@
         <!-- FRENTE DO CARD -->
         <div class="front">
           <!-- Placeholder de imagem para MVP local -->
-          <img [src]="post.imageUrl ? 'http://localhost:5106' + post.imageUrl : 'https://picsum.photos/400/500?random=' + post.id" class="post-image" />
+          <img [src]="post.imageUrl ? getImageUrl(post.imageUrl) : 'https://picsum.photos/400/500?random=' + post.id" class="post-image" />
           
           <div class="post-overlay">
             <div class="post-header">
