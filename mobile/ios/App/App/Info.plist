@@ -57,5 +57,7 @@
 	<string>O Pinless usa sua localização para marcar onde a foto foi tirada.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>O Pinless precisa da localização para funcionar em segundo plano e marcar suas fotos.</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 </dict>
 </plist>
