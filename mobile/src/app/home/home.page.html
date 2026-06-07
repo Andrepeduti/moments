@@ -1,0 +1,118 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="light">
+    <ion-segment [(ngModel)]="activeTab" (ionChange)="segmentChanged($event)" mode="ios">
+      <ion-segment-button value="descobrir">
+        <ion-label>Descobrir</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="amigos">
+        <ion-label>Amigos</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+
+    <ion-buttons slot="end">
+      <ion-button routerLink="/notifications" class="bell-button">
+        <ion-icon name="notifications-outline" size="large"></ion-icon>
+        <ion-badge color="danger" class="badge-icon" *ngIf="pendingRequestsCount > 0">{{ pendingRequestsCount }}</ion-badge>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content color="light">
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content 
+      pullingIcon="chevron-down-circle-outline"
+      pullingText="Puxe para atualizar..."
+      refreshingSpinner="crescent"
+      refreshingText="Buscando novas fotos pelo mundo...">
+    </ion-refresher-content>
+  </ion-refresher>
+
+  <div class="feed-container">
+    <div class="card-container" *ngFor="let post of posts" [class.flipped]="post.isFlipped" (click)="toggleFlip(post)">
+      <div class="card-flipper">
+        
+        <!-- FRENTE DO CARD -->
+        <div class="front">
+          <!-- Placeholder de imagem para MVP local -->
+          <img [src]="post.imageUrl ? 'http://localhost:5106' + post.imageUrl : 'https://picsum.photos/400/500?random=' + post.id" class="post-image" />
+          
+          <div class="post-overlay">
+            <div class="post-header">
+              <ion-avatar [routerLink]="['/passport', post.author.id]" (click)="$event.stopPropagation()">
+                <img [src]="getImageUrl(post.author.profilePictureUrl)" />
+              </ion-avatar>
+              <div class="author-info">
+                <h3 [routerLink]="['/passport', post.author.id]" (click)="$event.stopPropagation()">{{ post.author.name || post.author.username || 'Explorador' }}</h3>
+                <div class="post-meta">
+                  <span class="post-date">{{ post.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+                  <span *ngIf="activeTab === 'amigos'" class="privacy-tag" [class.public]="post.isPublic" [class.friends]="!post.isPublic">
+                    <ion-icon [name]="post.isPublic ? 'globe-outline' : 'people-outline'"></ion-icon>
+                    {{ post.isPublic ? 'Pública' : 'Amigos' }}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="interaction-hint">
+              <ion-icon name="swap-horizontal-outline"></ion-icon>
+              <span>Toque para virar</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- VERSO DO CARD -->
+        <div class="back">
+          <div class="map-placeholder">
+            <!-- Mapa Estático (Carregamento Instantâneo) -->
+            <img *ngIf="post.lat || post.privacyLevel === 3"
+                 class="real-map"
+                 [src]="getMapUrl(post)"
+                 alt="Mapa da localização" />
+            
+            <div class="map-mock" *ngIf="!post.lat && post.privacyLevel !== 3">
+              <ion-icon name="map-outline" size="large"></ion-icon>
+            </div>
+            
+            <div class="privacy-overlay">
+              <div class="privacy-indicator" *ngIf="post.privacyLevel === 1">
+                <ion-icon name="location" color="danger"></ion-icon>
+                <span>Local Exato</span>
+              </div>
+              <div class="privacy-indicator" *ngIf="post.privacyLevel === 2">
+                <div class="blurred-radius"></div>
+                <span>Região Aproximada (~5km)</span>
+              </div>
+              <div class="privacy-indicator" *ngIf="post.privacyLevel === 3">
+                <ion-icon name="globe-outline" color="primary"></ion-icon>
+                <span>Nível Macro</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="back-details">
+            <h2 *ngIf="post.distance !== null">Esta foto foi tirada a <strong>{{ post.privacyLevel === 2 ? '~' : '' }}{{ post.distance }} km</strong> de você, em:</h2>
+            <h2 *ngIf="post.distance === null">Localizado em:</h2>
+            
+            <h1>{{ post.locationName || 'Local desconhecido' }}</h1>
+
+            <ion-button fill="clear" color="danger" class="report-btn" (click)="reportPost(post, $event)">
+              <ion-icon name="warning-outline" slot="start"></ion-icon>
+              Denunciar
+            </ion-button>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+
+    <div *ngIf="isLoading" class="loading-state">
+      <ion-spinner name="crescent" color="primary"></ion-spinner>
+      <p>Buscando fotos pelo mundo...</p>
+    </div>
+
+    <div *ngIf="!isLoading && posts.length === 0" class="empty-state">
+      <ion-icon name="images-outline" size="large"></ion-icon>
+      <p>Nenhuma foto encontrada no momento.</p>
+    </div>
+  </div>
+</ion-content>

@@ -1,0 +1,37 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="light">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Solicitações de Amizade</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content color="light" class="ion-padding">
+  
+  <div *ngIf="isLoading" class="ion-text-center ion-padding">
+    <ion-spinner></ion-spinner>
+  </div>
+
+  <div *ngIf="!isLoading && requests.length === 0" class="empty-state">
+    <ion-icon name="mail-open-outline"></ion-icon>
+    <h3>Nenhuma solicitação</h3>
+    <p>Você não possui solicitações de amizade pendentes no momento.</p>
+  </div>
+
+  <ion-list *ngIf="!isLoading && requests.length > 0" class="requests-list" lines="none">
+    <ion-item *ngFor="let req of requests" class="request-item">
+      <ion-avatar slot="start" [routerLink]="['/tabs/passport', req.id]">
+        <img [src]="getProfileImageUrl(req.profilePictureUrl)" />
+      </ion-avatar>
+      <ion-label>
+        <h2>{{ req.name }}</h2>
+        <p>@{{ req.username }}</p>
+      </ion-label>
+      <ion-button slot="end" shape="round" color="primary" (click)="acceptRequest(req.id)">
+        Aceitar
+      </ion-button>
+    </ion-item>
+  </ion-list>
+
+</ion-content>

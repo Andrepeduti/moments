@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 105">
+  <defs>
+    <clipPath id="globe-clip">
+      <circle cx="50" cy="42" r="32" />
+    </clipPath>
+  </defs>
+  
+  <g fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Continentes (Clipped para não vazar a borda) -->
+    <g clip-path="url(#globe-clip)">
+      <!-- North America -->
+      <path d="M 31 13 L 34 20 L 27 24 L 31 31 L 37 41 L 44 44 L 45 38 L 49 34 L 59 36 L 62 23 L 53 16 L 42 12 Z" />
+      <!-- South America -->
+      <path d="M 44 44 L 51 47 L 65 48 L 69 54 L 65 64 L 55 74 L 53 61 L 46 54 L 46 48 Z" />
+      <!-- Europe/Africa edge -->
+      <path d="M 69 12 L 72 19 L 69 26 L 73 29 L 85 30" />
+    </g>
+    
+    <!-- Globo Principal -->
+    <circle cx="50" cy="42" r="32" />
+    
+    <!-- Pino Superior -->
+    <line x1="61" y1="12" x2="65" y2="2" />
+    
+    <!-- Pino Inferior -->
+    <line x1="39" y1="72" x2="35" y2="82" />
+    
+    <!-- Braço Lateral (Arco) -->
+    <path d="M 64 5 A 40 40 0 0 1 36 79" />
+    
+    <!-- Haste do Suporte -->
+    <line x1="50" y1="82" x2="50" y2="92" />
+    
+    <!-- Base do Suporte -->
+    <path d="M 35 92 L 65 92 L 70 100 L 30 100 Z" />
+  </g>
+</svg>

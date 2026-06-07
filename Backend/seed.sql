@@ -1,0 +1,1 @@
+INSERT INTO "Users" ("Id", "Username", "Name", "Email", "PasswordHash", "ProfilePictureUrl", "CreatedAt") VALUES ('670533c1-4848-4664-a3ef-980468275b22', 'tester', 'Andre', 'andre@teste.com', 'hash', 'https://ionicframework.com/docs/img/demos/avatar.svg', NOW());

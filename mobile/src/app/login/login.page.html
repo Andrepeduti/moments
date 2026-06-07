@@ -1,0 +1,34 @@
+<ion-content class="ion-padding ion-text-center login-bg">
+  <div class="login-container">
+    <div class="logo-container">
+      <ion-icon name="camera-outline" class="main-logo"></ion-icon>
+      <h1>Moments</h1>
+      <p>O seu passaporte para o mundo.</p>
+    </div>
+
+    <form #loginForm="ngForm" (ngSubmit)="loginForm.form.valid && login()" class="login-form">
+      <ion-item lines="none" class="input-item">
+        <ion-icon name="mail-outline" slot="start"></ion-icon>
+        <ion-input type="email" placeholder="E-mail" [(ngModel)]="email" name="email" required email></ion-input>
+      </ion-item>
+      
+      <ion-item lines="none" class="input-item">
+        <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
+        <ion-input [type]="showPassword ? 'text' : 'password'" placeholder="Senha" [(ngModel)]="password" name="password" required minlength="6"></ion-input>
+        <ion-button fill="clear" slot="end" (click)="showPassword = !showPassword" color="medium">
+          <ion-icon slot="icon-only" [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+        </ion-button>
+      </ion-item>
+
+      <ion-button expand="block" shape="round" type="submit" class="login-btn" [disabled]="!loginForm.form.valid">
+        Entrar
+      </ion-button>
+    </form>
+
+    <div class="register-link-container">
+      <ion-button fill="clear" color="medium" class="register-link" routerLink="/register">
+        Não tem uma conta? <strong>Cadastre-se</strong>
+      </ion-button>
+    </div>
+  </div>
+</ion-content>

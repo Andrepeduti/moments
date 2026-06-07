@@ -1,0 +1,79 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary">
+    <ion-title>Compartilhar Momento</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding upload-bg">
+
+  <!-- Image Selection -->
+  <div class="image-preview" (click)="takePicture()" *ngIf="!selectedImageUri">
+    <ion-icon name="camera-outline"></ion-icon>
+    <p>Toque para tirar foto ou selecionar da galeria</p>
+  </div>
+
+  <div class="image-preview-loaded" *ngIf="selectedImageUri" (click)="takePicture()">
+    <img [src]="selectedImageUri" alt="Momento Selecionado" />
+    <div class="change-label">Trocar Foto</div>
+  </div>
+
+  <ion-list lines="none" class="settings-list">
+    <!-- Location section -->
+    <ion-item class="setting-item location-item">
+      <ion-icon name="location-outline" slot="start" color="primary"></ion-icon>
+      <ion-label>
+        <h2>Sua Localização</h2>
+        <p *ngIf="latitude && longitude">
+          {{ latitude | number:'1.2-4' }}, {{ longitude | number:'1.2-4' }}
+        </p>
+        <p *ngIf="!latitude || !longitude" class="error-text">
+          Localização Pendente
+        </p>
+      </ion-label>
+      <ion-button slot="end" fill="clear" (click)="getLocation()" [disabled]="isLocating">
+        <ion-spinner *ngIf="isLocating" name="crescent"></ion-spinner>
+        <span *ngIf="!isLocating">{{ latitude ? 'Atualizar' : 'Obter GPS' }}</span>
+      </ion-button>
+    </ion-item>
+
+    <ion-item class="setting-item">
+      <ion-icon name="eye-outline" slot="start" color="medium"></ion-icon>
+      <ion-select label="Precisão Geográfica" label-placement="floating" [(ngModel)]="privacyLevel">
+        <ion-select-option [value]="1">Exata (Local Perfeito)</ion-select-option>
+        <ion-select-option [value]="2">Região (Raio de ~5km)</ion-select-option>
+        <ion-select-option [value]="3">Macro (Apenas País/Estado)</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <div class="visibility-segment-container">
+      <ion-segment [(ngModel)]="isPublic" class="custom-segment" mode="ios">
+        <ion-segment-button [value]="true">
+          <ion-icon name="earth-outline"></ion-icon>
+          <ion-label>Público</ion-label>
+        </ion-segment-button>
+        <ion-segment-button [value]="false">
+          <ion-icon name="people-outline"></ion-icon>
+          <ion-label>Apenas Amigos</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+      <p class="visibility-hint" *ngIf="isPublic">Sua postagem aparecerá na aba "Descobrir" e "Amigos".</p>
+      <p class="visibility-hint" *ngIf="!isPublic">Sua postagem será restrita à aba "Amigos".</p>
+    </div>
+
+    <ion-item class="setting-item">
+      <ion-icon name="ticket-outline" slot="start" color="warning"></ion-icon>
+      <ion-toggle justify="space-between" [(ngModel)]="includeInPassport">
+        Salvar no Passaporte
+      </ion-toggle>
+    </ion-item>
+  </ion-list>
+
+  <div class="button-container">
+    <ion-button expand="block" shape="round" color="primary" class="upload-btn" (click)="sharePost()" [disabled]="isUploading || !selectedImageBlob || !latitude">
+      <ion-spinner *ngIf="isUploading" name="crescent"></ion-spinner>
+      <span *ngIf="!isUploading">Publicar Momento Verdadeiro</span>
+      <ion-icon *ngIf="!isUploading" name="paper-plane-outline" slot="end"></ion-icon>
+    </ion-button>
+  </div>
+
+</ion-content>

@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Ticket (Back Right, Tilted) -->
+  <g transform="translate(180, 20) rotate(15)">
+    <!-- Ticket Border -->
+    <rect x="0" y="0" width="220" height="420" rx="30" fill="none" stroke="currentColor" stroke-width="32" stroke-linejoin="round"/>
+    <!-- Airplane on Ticket -->
+    <path d="M110 50 L110 130 M110 50 L140 100 L180 110 L140 130 L110 130 M110 50 L80 100 L40 110 L80 130 L110 130" fill="currentColor" stroke="currentColor" stroke-width="16" stroke-linejoin="round"/>
+    <!-- Dotted Line separator -->
+    <line x1="40" y1="200" x2="180" y2="200" stroke="currentColor" stroke-width="24" stroke-dasharray="24 24" stroke-linecap="round"/>
+    <!-- Barcode / Details -->
+    <rect x="40" y="250" width="40" height="120" fill="currentColor"/>
+    <rect x="100" y="250" width="20" height="120" fill="currentColor"/>
+    <rect x="140" y="250" width="40" height="120" fill="currentColor"/>
+  </g>
+
+  <!-- Passport (Front Left, Straight) -->
+  <g transform="translate(20, 90)">
+    <!-- Passport Border -->
+    <rect x="0" y="0" width="280" height="380" rx="20" fill="#ffffff" stroke="currentColor" stroke-width="32" stroke-linejoin="round"/>
+    
+    <!-- Globe Icon -->
+    <circle cx="140" cy="170" r="90" fill="none" stroke="currentColor" stroke-width="24"/>
+    <!-- Globe Grid Lines -->
+    <ellipse cx="140" cy="170" rx="40" ry="90" fill="none" stroke="currentColor" stroke-width="24"/>
+    <line x1="50" y1="170" x2="230" y2="170" stroke="currentColor" stroke-width="24"/>
+    <line x1="75" y1="110" x2="205" y2="110" stroke="currentColor" stroke-width="24"/>
+    <line x1="75" y1="230" x2="205" y2="230" stroke="currentColor" stroke-width="24"/>
+    <line x1="140" y1="80" x2="140" y2="260" stroke="currentColor" stroke-width="24"/>
+
+    <!-- Bottom Text Line -->
+    <line x1="50" y1="320" x2="230" y2="320" stroke="currentColor" stroke-width="32" stroke-linecap="round"/>
+  </g>
+</svg>

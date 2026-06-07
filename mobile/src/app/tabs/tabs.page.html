@@ -1,0 +1,27 @@
+<ion-tabs>
+  <ion-tab-bar slot="bottom" color="light">
+    <ion-tab-button tab="home" class="custom-tab-placeholder"></ion-tab-button>
+    <ion-tab-button tab="upload" class="custom-tab-placeholder"></ion-tab-button>
+    <ion-tab-button tab="passport" class="custom-tab-placeholder"></ion-tab-button>
+  </ion-tab-bar>
+
+  <!-- Container de Botões Customizados por cima do Tab Bar (z-index 1000) -->
+  <div class="custom-tab-buttons-container">
+    
+    <!-- Botão Home (Globo) -->
+    <div class="custom-tab-btn" routerLink="/tabs/home" routerLinkActive="active-tab">
+      <ion-icon src="assets/icon/custom-globe.svg"></ion-icon>
+    </div>
+
+    <!-- Botão Central (FAB - Adicionar) -->
+    <div class="custom-tab-btn middle-fab" routerLink="/tabs/upload" routerLinkActive="active-tab">
+      <ion-icon name="add"></ion-icon>
+    </div>
+
+    <!-- Botão Passaporte -->
+    <div class="custom-tab-btn" routerLink="/tabs/passport" routerLinkActive="active-tab">
+      <ion-icon src="assets/icon/custom-passport.svg"></ion-icon>
+    </div>
+
+  </div>
+</ion-tabs>

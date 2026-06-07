@@ -1,0 +1,61 @@
+# ==============================================================================
+# MomentsApp - Unified Monorepo .gitignore
+# ==============================================================================
+
+# OS files
+# ------------------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+*.db
+
+# IDEs and Editors
+# ------------------------------------------------------------------------------
+.vs/
+.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+.idea/
+*.swp
+*.swo
+
+# ==============================================================================
+# BACKEND (.NET / C#)
+# ==============================================================================
+Backend/bin/
+Backend/obj/
+Backend/TestResults/
+Backend/appsettings.Development.json
+
+# Local storage uploads (where uploaded photos are stored in development)
+Backend/wwwroot/uploads/
+Backend/uploads/
+
+# User-secrets and developer overrides
+Backend/appsettings.local.json
+Backend/secrets.json
+
+# Entity Framework migration transaction/logs (if any local log files exist)
+*.log
+
+# ==============================================================================
+# FRONTEND (Node.js / Angular / Ionic)
+# ==============================================================================
+mobile/node_modules/
+mobile/.angular/
+mobile/dist/
+mobile/www/
+mobile/.sourcemaps
+mobile/package-lock.json.log
+mobile/yarn-error.log
+mobile/npm-debug.log*
+
+# Capacitor / Cordova build outputs (if built locally for iOS/Android)
+mobile/platforms/
+mobile/plugins/
+mobile/ios/App/public/
+mobile/android/app/src/main/assets/public/
+
+# Environment configurations
+mobile/src/environments/environment.prod.ts

@@ -1,0 +1,47 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/passport" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Editar Perfil</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="saveProfile()">
+        <ion-icon name="checkmark-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding" color="light">
+  
+  <div class="edit-avatar-section">
+    <ion-avatar class="edit-avatar" (click)="fileInput.click()">
+      <img [src]="getImageUrl(profileData.profilePictureUrl)" />
+      <div class="avatar-overlay">
+        <ion-icon name="camera-outline"></ion-icon>
+      </div>
+    </ion-avatar>
+    <p class="change-photo-text" color="primary" (click)="fileInput.click()">Alterar foto</p>
+    <input type="file" #fileInput hidden accept="image/*" (change)="onFileSelected($event)">
+  </div>
+
+  <div class="form-container">
+    <ion-item class="custom-input" lines="none">
+      <ion-label position="stacked">Nome</ion-label>
+      <ion-input type="text" [(ngModel)]="profileData.name" placeholder="Como quer ser chamado?" maxlength="30" counter="true"></ion-input>
+    </ion-item>
+
+    <ion-item class="custom-input" lines="none">
+      <ion-label position="stacked">Bio</ion-label>
+      <ion-textarea autoGrow="true" rows="3" [(ngModel)]="profileData.bio" placeholder="Conte um pouco sobre suas aventuras..." maxlength="150" counter="true"></ion-textarea>
+    </ion-item>
+
+    <ion-item class="custom-input" lines="none">
+      <ion-label position="stacked">País de Origem</ion-label>
+      <ion-select [(ngModel)]="profileData.nationality" placeholder="Selecione seu país" interface="action-sheet">
+        <ion-select-option *ngFor="let c of countries" [value]="c.code">{{ c.name }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+  </div>
+
+</ion-content>

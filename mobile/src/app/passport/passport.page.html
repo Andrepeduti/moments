@@ -1,0 +1,195 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button text="" *ngIf="hasUserIdInRoute" defaultHref="/tabs/home"></ion-back-button>
+      <ion-button *ngIf="!hasUserIdInRoute" routerLink="/settings">
+        <ion-icon name="settings-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ isOwnPassport ? 'Meu Passaporte' : 'Passaporte' }}</ion-title>
+    <ion-buttons slot="end" *ngIf="isOwnPassport && !flippedCountryId">
+      <ion-button routerLink="/edit-profile">
+        <ion-icon name="pencil-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content color="light">
+  
+  <div *ngIf="hasError" class="error-state">
+    <ion-icon name="cloud-offline-outline" class="error-icon"></ion-icon>
+    <h3>Servidor Inacessível</h3>
+    <p>Não conseguimos nos conectar com o servidor. Verifique sua conexão ou tente novamente.</p>
+    <ion-button shape="round" color="primary" (click)="retryLoading()">
+      <ion-icon slot="start" name="refresh-outline"></ion-icon>
+      Tentar Novamente
+    </ion-button>
+  </div>
+
+  <div *ngIf="isLoading && !hasError" class="loading-state">
+    <ion-spinner name="crescent" color="primary"></ion-spinner>
+    <p>Carregando seu passaporte...</p>
+  </div>
+
+  <div *ngIf="!isLoading && !hasError">
+    <div class="profile-header" *ngIf="userProfile">
+      <ion-avatar class="profile-avatar">
+        <img [src]="getImageUrl(userProfile?.profilePictureUrl)" />
+      </ion-avatar>
+      <div class="profile-info">
+        <h2 class="profile-name">
+          {{ userProfile?.name || 'Seu Nome' }}
+          <img *ngIf="userProfile?.nationality && userProfile?.nationality !== '...'" [src]="getOriginFlagUrl(userProfile.nationality)" class="flag-icon" />
+        </h2>
+        <p class="profile-bio">{{ userProfile?.bio || 'Nenhuma bio definida' }}</p>
+
+        <div class="profile-stats">
+          <div class="stat-pill">
+            <ion-icon name="people-outline"></ion-icon>
+            <span>
+              <ng-container *ngIf="friendCount !== null">{{ friendCount }}</ng-container>
+              <ion-spinner *ngIf="friendCount === null" name="dots" style="width:12px;height:12px"></ion-spinner>
+              Amigo{{ friendCount !== 1 ? 's' : '' }}
+            </span>
+          </div>
+        </div>
+
+        <ion-button *ngIf="!isOwnPassport && friendshipStatus !== 'Self'" expand="block" shape="round" color="primary" class="add-friend-btn" (click)="addFriend()" [disabled]="friendshipStatus !== 'None'">
+          <ion-icon slot="start" [name]="friendshipStatus === 'Friends' ? 'people-outline' : (friendshipStatus === 'Pending_Sent' ? 'checkmark-outline' : 'person-add-outline')"></ion-icon>
+          {{ friendshipStatus === 'Friends' ? 'Amigos' : (friendshipStatus === 'Pending_Sent' ? 'Convite Enviado' : (friendshipStatus === 'Pending_Received' ? 'Cheque as Notificações' : 'Adicionar Amigo')) }}
+        </ion-button>
+      </div>
+    </div>
+
+
+  <!-- Overlay do fundo quando uma carta está focada -->
+  <div class="modal-backdrop" *ngIf="focusedCountryId" (click)="closeFlip()"></div>
+
+  <div class="passport-grid ion-padding">
+    <div *ngFor="let group of groupedPassportData" class="rarity-shelf">
+      <div class="shelf-header">
+        <img [src]="group.icon" class="shelf-icon" />
+        <h2>{{ group.title }}</h2>
+        <span class="shelf-count">{{ group.items.length }}</span>
+      </div>
+
+      <div class="countries-grid">
+        <div *ngFor="let country of group.items" class="flip-container"
+          [class.focused]="focusedCountryId === country.id" (click)="flipCountry(country, $event)">
+
+          <div class="flipper">
+            <!-- Frente da Carta -->
+            <div class="front country-card rarity-{{country.rarity}}">
+              <img
+                [src]="country.code === 'GALAXY' ? 'assets/rarities/galactic.png' : (country.code === 'OCEAN' ? 'https://flagcdn.com/w160/un.png' : 'https://flagcdn.com/w160/' + country.code.toLowerCase() + '.png')"
+                class="country-flag" />
+              <h3 class="country-name">{{ country.name }}</h3>
+            </div>
+
+            <!-- Verso da Carta -->
+            <div class="back country-card rarity-{{country.rarity}}">
+              <div class="back-country-id">
+                <img
+                  [src]="country.code === 'GALAXY' ? 'assets/rarities/galactic.png' : (country.code === 'OCEAN' ? 'https://flagcdn.com/w160/un.png' : 'https://flagcdn.com/w160/' + country.code.toLowerCase() + '.png')"
+                  class="tiny-flag" />
+                <span>{{ country.name }}</span>
+              </div>
+
+              <div class="back-rarity-header">
+                <h4 class="rarity-title">
+                  {{ country.rarity === 'galactic' ? 'Galácticos' :
+                  country.rarity === 'obsidian' ? 'Terras Longínquas' :
+                  country.rarity === 'pioneer' ? 'Pioneiro' : 'Selo Base' }}
+                </h4>
+                <img [src]="'assets/rarities/' + country.rarity + '.png'" class="back-rarity-icon" />
+              </div>
+
+              <div class="back-stats" *ngIf="countryStats[country.id]">
+                <div class="stat-block">
+                  <p>Desbloqueado em</p>
+                  <strong>{{ country.unlockedAt | date:'dd/MM/yyyy' }}</strong>
+                </div>
+
+                <div class="rarity-info">
+                  <p>{{ countryStats[country.id].unlockCount }} pessoa(s) possuem</p>
+                  <p class="percentage">{{ countryStats[country.id].percentage }}%</p>
+                </div>
+              </div>
+
+              <ion-spinner *ngIf="!countryStats[country.id]"></ion-spinner>
+
+              <ion-button expand="block" shape="round" color="light" size="small" class="open-collection-btn"
+                (click)="openCountryDetails(country, $event)">
+                Ver Coletânea
+              </ion-button>
+            </div>
+          </div>
+        </div>
+      </div> <!-- fecha countries-grid -->
+    </div> <!-- fecha rarity-shelf -->
+
+    <div *ngIf="groupedPassportData.length === 0" class="empty-state">
+      <ion-icon name="airplane-outline" size="large"></ion-icon>
+      <p>Você ainda não possui nenhum carimbo.</p>
+    </div>
+  </div>
+
+  <!-- Modal Coleção do País -->
+  <ion-modal [isOpen]="!!selectedCountry" (didDismiss)="closeCountryDetails()">
+    <ng-template>
+      <ion-header class="ion-no-border">
+        <ion-toolbar color="light">
+          <ion-title>
+            <div class="modal-title-content">
+              <img
+                [src]="selectedCountry?.code === 'GALAXY' ? 'assets/galaxy.png' : (selectedCountry?.code === 'OCEAN' ? 'https://flagcdn.com/w40/un.png' : 'https://flagcdn.com/w40/' + selectedCountry?.code.toLowerCase() + '.png')"
+                class="modal-flag" />
+              <span>{{ selectedCountry?.name }}</span>
+            </div>
+          </ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="closeCountryDetails()" color="dark">
+              <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding collection-content" color="light">
+
+
+        <div *ngFor="let state of selectedCountry?.states" class="state-collection">
+          <div class="state-header">
+            <ion-icon name="location-outline" color="primary"></ion-icon>
+            <h3 class="state-title">{{ state.name }}</h3>
+          </div>
+
+          <div class="photos-grid">
+            <div *ngFor="let photo of getPhotosForState(state.id, selectedCountry?.photos)" class="photo-item"
+              (click)="expandImage(photo)">
+              <img
+                [src]="photo.imageUrl ? 'http://localhost:5106' + photo.imageUrl : 'https://picsum.photos/150/150?random=' + photo.id" />
+              <div class="photo-location">{{ photo.locationName }}</div>
+            </div>
+          </div>
+
+          <div *ngIf="getPhotosForState(state.id, selectedCountry?.photos).length === 0" class="empty-state-small">
+            Nenhuma foto arquivada neste estado ainda.
+          </div>
+        </div>
+
+      </ion-content>
+
+      <!-- Expanded Image Overlay -->
+      <div class="image-modal-backdrop" *ngIf="expandedImageUrl" (click)="expandedImageUrl = null">
+        <ion-button fill="clear" color="light" class="close-image-btn"
+          (click)="expandedImageUrl = null; $event.stopPropagation()">
+          <ion-icon name="close-circle" size="large"></ion-icon>
+        </ion-button>
+        <img [src]="expandedImageUrl" class="expanded-image" (click)="$event.stopPropagation()" />
+      </div>
+    </ng-template>
+  </ion-modal>
+
+  </div>
+</ion-content>

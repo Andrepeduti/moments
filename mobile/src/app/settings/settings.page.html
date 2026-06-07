@@ -1,0 +1,19 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/passport" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Configurações</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content color="light">
+  <div class="ion-padding-top">
+    <ion-list inset="true">
+      <ion-item button detail="false" lines="none" (click)="logout()">
+        <ion-icon name="log-out-outline" slot="start" color="danger"></ion-icon>
+        <ion-label color="danger">Sair da Conta</ion-label>
+      </ion-item>
+    </ion-list>
+  </div>
+</ion-content>
