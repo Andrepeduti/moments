@@ -1,16 +1,14 @@
 workflows:
   ios-release:
     name: iOS Release (App Store / TestFlight)
+    integrations:
+      app_store_connect: "Moments"
     max_build_duration: 60
     instance_type: mac_mini_m1
     environment:
       node: latest
       xcode: latest
       cocoapods: default
-      groups:
-        # Você deve criar um Variable Group no CodeMagic chamado 'apple_credentials'
-        # e conectar a sua App Store Connect API Key.
-        - apple_credentials
     scripts:
       - name: Instalar dependências Node (Frontend)
         script: |
