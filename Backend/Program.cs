@@ -11,6 +11,9 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configura AWS Logging usando a seção AWS.Logging do appsettings
+builder.Logging.AddAWSProvider(builder.Configuration.GetAWSLoggingConfigSection());
+
 // Add services to the container.
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -44,7 +47,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddHttpClient();
-builder.Services.AddScoped<IStorageService, LocalStorageService>();
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddScoped<IStorageService, LocalStorageService>();
+}
+else
+{
+    builder.Services.AddScoped<IStorageService, S3StorageService>();
+}
 builder.Services.AddScoped<IGeocodingService, NominatimGeocodingService>();
 
 // Setup DbContext with PostGIS support
