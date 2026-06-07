@@ -47,5 +47,13 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>O Pinless precisa de acesso à câmera para você tirar fotos dos seus momentos.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>O Pinless precisa salvar fotos na sua galeria.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>O Pinless precisa acessar sua galeria para você escolher fotos dos seus momentos.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>O Pinless usa sua localização para marcar onde a foto foi tirada.</string>
 </dict>
 </plist>
