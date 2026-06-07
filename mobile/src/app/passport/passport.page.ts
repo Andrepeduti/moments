@@ -23,6 +23,7 @@ export class PassportPage {
   flippedCountryId: string | null = null;
   focusedCountryId: string | null = null;
   countryStats: { [id: string]: any } = {};
+  isModalLoading: boolean = false;
 
   hasError: boolean = false;
   isLoading: boolean = true;
@@ -45,7 +46,7 @@ export class PassportPage {
   ionViewWillEnter() {
     this.userId = this.route.snapshot.paramMap.get('userId');
     this.hasUserIdInRoute = !!this.userId;
-    
+
     // Reset state before loading
     this.isLoading = true;
     this.hasError = false;
@@ -60,7 +61,7 @@ export class PassportPage {
       take(1)
     ).subscribe(profile => {
       const loggedInUserId = profile?.id || profile?.Id;
-      
+
       // Avalia se é o próprio passaporte
       this.isOwnPassport = !this.userId || this.userId === loggedInUserId;
 
@@ -123,13 +124,13 @@ export class PassportPage {
   retryLoading() {
     this.hasError = false;
     this.isLoading = true;
-    
+
     if (this.isOwnPassport) {
       this.profileService.fetchProfile(); // Apenas forçar a busca, a inscrição (subscribe) já existe
     } else {
       this.loadProfile(); // Buscar novamente o perfil de terceiro
     }
-    
+
     this.loadPassport();
   }
 
@@ -264,8 +265,16 @@ export class PassportPage {
     const details = this.countryStats[country.id] || {};
     this.selectedCountry = { ...country, ...details };
 
-    this.passportService.getBadgePhotos(country.id, this.userId || undefined).subscribe((photos: any[]) => {
-      this.selectedCountry.photos = photos;
+    this.isModalLoading = true;
+    this.passportService.getBadgePhotos(country.id, this.userId || undefined).subscribe({
+      next: (photos: any[]) => {
+        this.selectedCountry.photos = photos;
+        this.isModalLoading = false;
+      },
+      error: () => {
+        this.selectedCountry.photos = [];
+        this.isModalLoading = false;
+      }
     });
   }
 

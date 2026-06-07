@@ -174,7 +174,13 @@
             </div>
           </div>
 
-          <div *ngIf="getPhotosForState(state.id, selectedCountry?.photos).length === 0" class="empty-state-small">
+          <div *ngIf="isModalLoading" class="photos-grid">
+            <div class="photo-item" *ngFor="let i of [1, 2, 3]">
+              <ion-skeleton-text animated style="width: 100%; height: 100%; margin: 0;"></ion-skeleton-text>
+            </div>
+          </div>
+
+          <div *ngIf="!isModalLoading && getPhotosForState(state.id, selectedCountry?.photos).length === 0" class="empty-state-small">
             Nenhuma foto arquivada neste estado ainda.
           </div>
         </div>
