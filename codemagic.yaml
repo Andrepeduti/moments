@@ -1,48 +1,57 @@
 workflows:
-  ios-release:
-    name: iOS Release (App Store / TestFlight)
-    integrations:
-      app_store_connect: "Moments"
-    max_build_duration: 60
-    instance_type: mac_mini_m1
+  ios-capacitor:
+    name: Moments App - iOS Release
+    max_build_duration: 120
     environment:
       node: latest
       xcode: latest
-      cocoapods: default
+      groups:
+        - ios-credentials
+      vars:
+        XCODE_DEVELOPMENT_TEAM: "89XG86CSMN" # Ajuste se for um Team ID diferente
+        BUNDLE_ID: "com.andrepeduti.moments"
     scripts:
-      - name: Instalar dependências Node (Frontend)
+      - name: Instalar dependencias (NPM)
         script: |
           cd mobile
-          npm install
-      - name: Build do Angular (Produção)
+          npm install --legacy-peer-deps
+      - name: Compilar front-end do Angular
         script: |
           cd mobile
           npm run build
-      - name: Sincronizar Capacitor iOS
+      - name: Sincronizar pastas com o Capacitor (iOS)
         script: |
           cd mobile
           npx cap sync ios
-      - name: Configurar Assinatura (Code Signing)
+      - name: Inicializar Keychain
+        script: keychain initialize
+      - name: Criar Certificado e Provisioning Profile
         script: |
-          # O CodeMagic vai baixar os certificados de produção da Apple automaticamente
-          app-store-connect fetch-signing-files "$(xcode-project detect-bundle-id)" --type IOS_APP_STORE --create
-      - name: Set up keychain
-        script: |
-          keychain initialize
-          keychain add-certificates
-      - name: Build iOS (Gerar .ipa)
+          # O CodeMagic vai usar a integracao app_store_connect automaticamente
+          app-store-connect fetch-signing-files "$BUNDLE_ID" \
+            --type IOS_APP_STORE \
+            --create
+      - name: Adicionar certificados ao Keychain
+        script: keychain add-certificates
+      - name: Aplicar Provisioning Profile no projeto
         script: |
           cd mobile/ios/App
-          # Usando o xcode-project cli builder integrado do CodeMagic
+          xcode-project use-profiles
+      - name: Incrementar Build Number
+        script: |
+          echo "Setting build number to: $BUILD_NUMBER"
+          cd mobile/ios/App && agvtool new-version -all $BUILD_NUMBER
+      - name: Compilar aplicativo iOS (IPA)
+        script: |
+          cd mobile/ios/App
           xcode-project build-ipa \
-            --workspace App.xcworkspace \
-            --scheme App \
-            --config Release
+            --project "App.xcodeproj" \
+            --scheme "App"
+    integrations:
+      app_store_connect: "Moments" # Lembre de trocar pelo nome da sua chave no painel!
     artifacts:
       - mobile/ios/App/build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
     publishing:
       app_store_connect:
-        # Envia diretamente para o TestFlight assim que o build terminar
         auth: integration
-        submit_to_testflight: true

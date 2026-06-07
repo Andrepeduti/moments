@@ -58,4 +58,4 @@ mobile/ios/App/public/
 mobile/android/app/src/main/assets/public/
 
 # Environment configurations
-mobile/src/environments/environment.prod.ts
+# mobile/src/environments/environment.prod.ts
