@@ -137,3 +137,55 @@
   margin-top: 24px;
   margin-bottom: 40px; /* garante que fique visível e acima do menu inferior ao scrollar */
 }
+
+/* Full Screen Loader */
+.full-screen-loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeInOverlay 0.3s ease;
+
+  .loader-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+
+    .flying-airplane {
+      font-size: 72px;
+      margin-bottom: 20px;
+      color: var(--ion-color-primary);
+      filter: drop-shadow(0 4px 15px rgba(var(--ion-color-primary-rgb), 0.6));
+      animation: flyAirplane 2s infinite ease-in-out;
+    }
+
+    p {
+      font-size: 1.2rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+      margin: 0;
+    }
+  }
+}
+
+@keyframes fadeInOverlay {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes flyAirplane {
+  0% { transform: translateY(0) rotate(0deg) scale(1); }
+  25% { transform: translateY(-15px) rotate(5deg) scale(1.05); }
+  50% { transform: translateY(-25px) rotate(0deg) scale(1); }
+  75% { transform: translateY(-15px) rotate(-5deg) scale(0.95); }
+  100% { transform: translateY(0) rotate(0deg) scale(1); }
+}
