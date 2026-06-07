@@ -1,5 +1,5 @@
 <ion-header class="ion-no-border">
-  <ion-toolbar color="primary">
+  <ion-toolbar>
     <ion-title>Compartilhar Momento</ion-title>
   </ion-toolbar>
 </ion-header>
@@ -21,24 +21,23 @@
     <!-- Location section -->
     <ion-item class="setting-item location-item">
       <ion-icon name="location-outline" slot="start" color="primary"></ion-icon>
-      <ion-label>
-        <h2>Sua Localização</h2>
-        <p *ngIf="latitude && longitude">
+      <ion-label class="ion-text-wrap">
+        <p class="coords-text" *ngIf="latitude && longitude">
           {{ latitude | number:'1.2-4' }}, {{ longitude | number:'1.2-4' }}
         </p>
-        <p *ngIf="!latitude || !longitude" class="error-text">
+        <p class="coords-text error-text" *ngIf="!latitude || !longitude">
           Localização Pendente
         </p>
       </ion-label>
       <ion-button slot="end" fill="clear" (click)="getLocation()" [disabled]="isLocating">
         <ion-spinner *ngIf="isLocating" name="crescent"></ion-spinner>
-        <span *ngIf="!isLocating">{{ latitude ? 'Atualizar' : 'Obter GPS' }}</span>
+        <ion-icon *ngIf="!isLocating" [name]="latitude ? 'refresh-outline' : 'locate-outline'" slot="icon-only"></ion-icon>
       </ion-button>
     </ion-item>
 
     <ion-item class="setting-item">
       <ion-icon name="eye-outline" slot="start" color="medium"></ion-icon>
-      <ion-select label="Precisão Geográfica" label-placement="floating" [(ngModel)]="privacyLevel">
+      <ion-select justify="space-between" label="Precisão Geográfica" [(ngModel)]="privacyLevel">
         <ion-select-option [value]="1">Exata (Local Perfeito)</ion-select-option>
         <ion-select-option [value]="2">Região (Raio de ~5km)</ion-select-option>
         <ion-select-option [value]="3">Macro (Apenas País/Estado)</ion-select-option>
@@ -71,7 +70,7 @@
   <div class="button-container">
     <ion-button expand="block" shape="round" color="primary" class="upload-btn" (click)="sharePost()" [disabled]="isUploading || !selectedImageBlob || !latitude">
       <ion-spinner *ngIf="isUploading" name="crescent"></ion-spinner>
-      <span *ngIf="!isUploading">Publicar Momento Verdadeiro</span>
+      <span *ngIf="!isUploading">Publicar</span>
       <ion-icon *ngIf="!isUploading" name="paper-plane-outline" slot="end"></ion-icon>
     </ion-button>
   </div>

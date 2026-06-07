@@ -17,8 +17,20 @@ namespace Backend.Services
 
         public S3StorageService(IConfiguration configuration, ILogger<S3StorageService> logger)
         {
-            // AWS S3 client will automatically use credentials from environment variables or IAM role in App Runner
-            _s3Client = new AmazonS3Client(Amazon.RegionEndpoint.USEast1);
+            var accessKey = configuration["AWS:AccessKeyId"];
+            var secretKey = configuration["AWS:SecretAccessKey"];
+            var region = Amazon.RegionEndpoint.USEast1; // Default to USEast1
+
+            if (!string.IsNullOrEmpty(accessKey) && !string.IsNullOrEmpty(secretKey))
+            {
+                var credentials = new Amazon.Runtime.BasicAWSCredentials(accessKey, secretKey);
+                _s3Client = new AmazonS3Client(credentials, region);
+            }
+            else
+            {
+                _s3Client = new AmazonS3Client(region);
+            }
+            
             _bucketName = configuration["AWS:S3BucketName"] ?? throw new InvalidOperationException("AWS:S3BucketName is missing from configuration.");
             _logger = logger;
         }

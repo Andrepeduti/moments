@@ -279,6 +279,6 @@ export class PassportPage {
   }
 
   expandImage(photo: any) {
-    this.expandedImageUrl = photo.imageUrl ? '${environment.baseUrl}' + photo.imageUrl : 'https://picsum.photos/400/500?random=' + photo.id;
+    this.expandedImageUrl = photo.imageUrl ? this.getImageUrl(photo.imageUrl) : 'https://picsum.photos/400/500?random=' + photo.id;
   }
 }

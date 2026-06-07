@@ -1,5 +1,5 @@
 <ion-header class="ion-no-border">
-  <ion-toolbar color="primary">
+  <ion-toolbar>
     <ion-buttons slot="start">
       <ion-back-button text="" *ngIf="hasUserIdInRoute" defaultHref="/tabs/home"></ion-back-button>
       <ion-button *ngIf="!hasUserIdInRoute" routerLink="/settings">
@@ -15,7 +15,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content color="light">
+<ion-content>
   
   <div *ngIf="hasError" class="error-state">
     <ion-icon name="cloud-offline-outline" class="error-icon"></ion-icon>
@@ -42,6 +42,7 @@
           {{ userProfile?.name || 'Seu Nome' }}
           <img *ngIf="userProfile?.nationality && userProfile?.nationality !== '...'" [src]="getOriginFlagUrl(userProfile.nationality)" class="flag-icon" />
         </h2>
+        <p class="profile-username" *ngIf="userProfile?.username">@{{ userProfile?.username }}</p>
         <p class="profile-bio">{{ userProfile?.bio || 'Nenhuma bio definida' }}</p>
 
         <div class="profile-stats">
@@ -149,7 +150,7 @@
             </div>
           </ion-title>
           <ion-buttons slot="end">
-            <ion-button (click)="closeCountryDetails()" color="dark">
+            <ion-button (click)="closeCountryDetails()">
               <ion-icon name="close-outline" slot="icon-only"></ion-icon>
             </ion-button>
           </ion-buttons>

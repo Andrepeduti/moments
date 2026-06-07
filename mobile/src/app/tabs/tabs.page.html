@@ -1,5 +1,5 @@
 <ion-tabs>
-  <ion-tab-bar slot="bottom" color="light">
+  <ion-tab-bar slot="bottom">
     <ion-tab-button tab="home" class="custom-tab-placeholder"></ion-tab-button>
     <ion-tab-button tab="upload" class="custom-tab-placeholder"></ion-tab-button>
     <ion-tab-button tab="passport" class="custom-tab-placeholder"></ion-tab-button>
@@ -14,13 +14,13 @@
     </div>
 
     <!-- Botão Central (FAB - Adicionar) -->
-    <div class="custom-tab-btn middle-fab" routerLink="/tabs/upload" routerLinkActive="active-tab">
+    <div class="custom-tab-btn" routerLink="/tabs/upload" routerLinkActive="active-tab">
       <ion-icon name="add"></ion-icon>
     </div>
 
     <!-- Botão Passaporte -->
     <div class="custom-tab-btn" routerLink="/tabs/passport" routerLinkActive="active-tab">
-      <ion-icon src="assets/icon/custom-passport.svg"></ion-icon>
+      <ion-icon class="passport-icon" src="assets/icon/custom-passport.svg"></ion-icon>
     </div>
 
   </div>
