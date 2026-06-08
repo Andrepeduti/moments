@@ -287,6 +287,11 @@ export class PassportPage {
     return photos.filter(p => p.stateId === stateId);
   }
 
+  getCountryLevelPhotos(photos: any[]) {
+    if (!photos) return [];
+    return photos.filter(p => !p.stateId);
+  }
+
   expandImage(photo: any) {
     this.expandedImageUrl = photo.imageUrl ? this.getImageUrl(photo.imageUrl) : 'https://picsum.photos/400/500?random=' + photo.id;
   }

@@ -173,9 +173,10 @@ export class UploadPage {
       },
       error: async (err) => {
         this.isUploading = false;
+        const errorMessage = typeof err.error === 'string' ? err.error : 'Erro ao enviar a postagem pro banco de dados.';
         const toast = await this.toastCtrl.create({
-          message: 'Erro ao enviar a postagem pro banco de dados.',
-          duration: 3000,
+          message: errorMessage,
+          duration: 4000,
           color: 'danger'
         });
         toast.present();

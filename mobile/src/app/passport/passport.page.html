@@ -83,7 +83,7 @@
             <!-- Frente da Carta -->
             <div class="front country-card rarity-{{country.rarity}}">
               <img
-                [src]="country.code === 'GALAXY' ? 'assets/rarities/galactic.png' : (country.code === 'OCEAN' ? 'https://flagcdn.com/w160/un.png' : 'https://flagcdn.com/w160/' + country.code.toLowerCase() + '.png')"
+                [src]="country.code === 'GALAXY' ? 'assets/rarities/galactic.png' : (country.code === 'OCEAN' ? 'assets/rarities/ocean.png' : 'https://flagcdn.com/w160/' + country.code.toLowerCase() + '.png')"
                 class="country-flag" />
               <h3 class="country-name">{{ country.name }}</h3>
             </div>
@@ -92,7 +92,7 @@
             <div class="back country-card rarity-{{country.rarity}}">
               <div class="back-country-id">
                 <img
-                  [src]="country.code === 'GALAXY' ? 'assets/rarities/galactic.png' : (country.code === 'OCEAN' ? 'https://flagcdn.com/w160/un.png' : 'https://flagcdn.com/w160/' + country.code.toLowerCase() + '.png')"
+                  [src]="country.code === 'GALAXY' ? 'assets/rarities/galactic.png' : (country.code === 'OCEAN' ? 'assets/rarities/ocean.png' : 'https://flagcdn.com/w160/' + country.code.toLowerCase() + '.png')"
                   class="tiny-flag" />
                 <span>{{ country.name }}</span>
               </div>
@@ -144,7 +144,7 @@
           <ion-title>
             <div class="modal-title-content">
               <img
-                [src]="selectedCountry?.code === 'GALAXY' ? 'assets/galaxy.png' : (selectedCountry?.code === 'OCEAN' ? 'https://flagcdn.com/w40/un.png' : 'https://flagcdn.com/w40/' + selectedCountry?.code.toLowerCase() + '.png')"
+                [src]="selectedCountry?.code === 'GALAXY' ? 'assets/rarities/galactic.png' : (selectedCountry?.code === 'OCEAN' ? 'assets/rarities/ocean.png' : 'https://flagcdn.com/w40/' + selectedCountry?.code.toLowerCase() + '.png')"
                 class="modal-flag" />
               <span>{{ selectedCountry?.name }}</span>
             </div>
@@ -160,7 +160,7 @@
 
 
         <div *ngFor="let state of selectedCountry?.states" class="state-collection">
-          <div class="state-header">
+          <div class="state-header" *ngIf="getPhotosForState(state.id, selectedCountry?.photos).length > 0">
             <ion-icon name="location-outline" color="primary"></ion-icon>
             <h3 class="state-title">{{ state.name }}</h3>
           </div>
@@ -173,15 +173,26 @@
               <div class="photo-location">{{ photo.locationName }}</div>
             </div>
           </div>
+        </div>
 
-          <div *ngIf="isModalLoading" class="photos-grid">
-            <div class="photo-item" *ngFor="let i of [1, 2, 3]">
-              <ion-skeleton-text animated style="width: 100%; height: 100%; margin: 0;"></ion-skeleton-text>
+        <!-- Fotos em nível de país ou selos especiais (sem estado) -->
+        <div *ngIf="getCountryLevelPhotos(selectedCountry?.photos).length > 0 || (!isModalLoading && selectedCountry?.photos?.length === 0)" class="state-collection">
+          <div class="state-header" *ngIf="selectedCountry?.states?.length > 0 && getCountryLevelPhotos(selectedCountry?.photos).length > 0">
+            <ion-icon name="globe-outline" color="primary"></ion-icon>
+            <h3 class="state-title">Geral</h3>
+          </div>
+
+          <div class="photos-grid">
+            <div *ngFor="let photo of getCountryLevelPhotos(selectedCountry?.photos)" class="photo-item"
+              (click)="expandImage(photo)">
+              <img
+                [src]="photo.imageUrl ? getImageUrl(photo.imageUrl) : 'https://picsum.photos/150/150?random=' + photo.id" />
+              <div class="photo-location">{{ photo.locationName }}</div>
             </div>
           </div>
 
-          <div *ngIf="!isModalLoading && getPhotosForState(state.id, selectedCountry?.photos).length === 0" class="empty-state-small">
-            Nenhuma foto arquivada neste estado ainda.
+          <div *ngIf="!isModalLoading && selectedCountry?.photos?.length === 0" class="empty-state-small">
+            Nenhuma foto arquivada neste selo ainda.
           </div>
         </div>
 

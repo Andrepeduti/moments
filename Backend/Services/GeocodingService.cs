@@ -27,6 +27,12 @@ namespace Backend.Services
                 if (response.IsSuccessStatusCode)
                 {
                     var data = await response.Content.ReadFromJsonAsync<JsonElement>();
+                    
+                    if (data.TryGetProperty("error", out var errorProp) && errorProp.GetString() == "Unable to geocode")
+                    {
+                        return new GeocodingResult { IsOcean = true };
+                    }
+
                     if (data.TryGetProperty("address", out var address))
                     {
                         string city = address.TryGetProperty("city", out var cityProp) ? cityProp.GetString() ?? "" :
@@ -47,12 +53,12 @@ namespace Backend.Services
                         };
                     }
                 }
-                return null;
+                
+                throw new Exception($"Geocoding API returned status {response.StatusCode}");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // Fallback or handle error (for MVP, return null)
-                return null;
+                throw new Exception("Falha na API de mapas.", ex);
             }
         }
     }

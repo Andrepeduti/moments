@@ -88,8 +88,17 @@ namespace Backend.Controllers
             // Reverse Geocoding
             if (finalLat.HasValue && finalLon.HasValue)
             {
-                var geoResult = await _geocodingService.GetLocationDetailsAsync(finalLat.Value, finalLon.Value);
-                if (geoResult != null && (!string.IsNullOrEmpty(geoResult.Country) || !string.IsNullOrEmpty(geoResult.City) || !string.IsNullOrEmpty(geoResult.State)))
+                GeocodingResult? geoResult = null;
+                try
+                {
+                    geoResult = await _geocodingService.GetLocationDetailsAsync(finalLat.Value, finalLon.Value);
+                }
+                catch (Exception)
+                {
+                    return BadRequest("Não foi possível calcular o endereço geográfico no momento. Por favor, tente publicar novamente em alguns segundos.");
+                }
+
+                if (geoResult != null && !geoResult.IsOcean && (!string.IsNullOrEmpty(geoResult.Country) || !string.IsNullOrEmpty(geoResult.City) || !string.IsNullOrEmpty(geoResult.State)))
                 {
                     var parts = new System.Collections.Generic.List<string>();
                     
@@ -140,7 +149,7 @@ namespace Backend.Controllers
                         post.BadgeId = cityBadge?.Id ?? stateBadge?.Id ?? countryBadge?.Id;
                     }
                 }
-                else
+                else if (geoResult != null && geoResult.IsOcean)
                 {
                     // Obsidiana: Terras Longínquas
                     post.LocationName = "Terras Longínquas";
