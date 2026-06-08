@@ -93,9 +93,9 @@ namespace Backend.Controllers
                 {
                     geoResult = await _geocodingService.GetLocationDetailsAsync(finalLat.Value, finalLon.Value);
                 }
-                catch (Exception)
+                catch
                 {
-                    return BadRequest("Não foi possível calcular o endereço geográfico no momento. Por favor, tente publicar novamente em alguns segundos.");
+                    // Ignore API failures so we don't block the post upload
                 }
 
                 if (geoResult != null && !geoResult.IsOcean && (!string.IsNullOrEmpty(geoResult.Country) || !string.IsNullOrEmpty(geoResult.City) || !string.IsNullOrEmpty(geoResult.State)))

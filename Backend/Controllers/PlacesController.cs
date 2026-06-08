@@ -109,16 +109,23 @@ namespace Backend.Controllers
         [HttpGet("reverse")]
         public async Task<IActionResult> ReverseGeocode([FromQuery] double lat, [FromQuery] double lon)
         {
-            var geoResult = await _geocodingService.GetLocationDetailsAsync(lat, lon);
-            if (geoResult != null)
+            try
             {
-                return Ok(new { 
-                    city = geoResult.City ?? "", 
-                    state = geoResult.State ?? "", 
-                    country = geoResult.Country ?? "" 
-                });
+                var geoResult = await _geocodingService.GetLocationDetailsAsync(lat, lon);
+                if (geoResult != null)
+                {
+                    return Ok(new { 
+                        city = geoResult.City ?? "", 
+                        state = geoResult.State ?? "", 
+                        country = geoResult.Country ?? "" 
+                    });
+                }
+                return Ok(new { city = "", state = "", country = "" });
             }
-            return Ok(new { city = "", state = "", country = "" });
+            catch
+            {
+                return BadRequest("O serviço de mapas demorou a responder ou está indisponível no momento. Por favor, tente novamente.");
+            }
         }
     }
 }

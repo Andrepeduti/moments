@@ -13,8 +13,8 @@ namespace Backend.Services
         public NominatimGeocodingService(HttpClient httpClient)
         {
             _httpClient = httpClient;
-            // Nominatim requires a user-agent to be set
-            _httpClient.DefaultRequestHeaders.Add("User-Agent", "MomentsApp/1.0");
+            // Nominatim requires a valid user-agent with contact info
+            _httpClient.DefaultRequestHeaders.Add("User-Agent", "MomentsApp/1.0 (admin@momentsapp.com)");
         }
 
         public async Task<GeocodingResult?> GetLocationDetailsAsync(double latitude, double longitude)

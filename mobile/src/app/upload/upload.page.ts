@@ -106,9 +106,23 @@ export class UploadPage {
       });
       if (response.ok) {
         this.autoLocationInfo = await response.json();
+      } else {
+        const errorText = await response.text();
+        const toast = await this.toastCtrl.create({
+          message: errorText || 'Falha ao conectar com o serviço de mapas.',
+          duration: 3000,
+          color: 'warning'
+        });
+        toast.present();
       }
     } catch (e) {
       console.error(e);
+      const toast = await this.toastCtrl.create({
+        message: 'Falha na conexão de rede ao buscar o local.',
+        duration: 3000,
+        color: 'warning'
+      });
+      toast.present();
     } finally {
       this.isGeocoding = false;
     }
