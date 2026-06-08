@@ -89,17 +89,9 @@ namespace Backend.Controllers
         {
             if (file == null || file.Length == 0) return BadRequest("File is empty");
             
-            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (!Guid.TryParse(userIdStr, out var userId)) return Unauthorized();
-
-            var user = await _context.Users.FindAsync(userId);
-            if (user == null) return NotFound();
-
             var imageUrl = await storageService.UploadFileAsync(file, "profiles");
-            user.ProfilePictureUrl = imageUrl;
-            await _context.SaveChangesAsync();
 
-            return Ok(new { profilePictureUrl = user.ProfilePictureUrl });
+            return Ok(new { profilePictureUrl = imageUrl });
         }
     }
 }

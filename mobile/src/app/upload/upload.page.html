@@ -31,7 +31,9 @@
       <ion-icon name="location-outline" slot="start" color="primary"></ion-icon>
       <ion-label class="ion-text-wrap">
         <p class="coords-text" *ngIf="latitude && longitude">
-          {{ latitude | number:'1.2-4' }}, {{ longitude | number:'1.2-4' }}
+          <span *ngIf="isGeocoding"><ion-spinner name="dots" style="width: 20px; height: 10px;"></ion-spinner> Buscando
+            local...</span>
+          <span *ngIf="!isGeocoding">{{ displayLocation }}</span>
         </p>
         <p class="coords-text error-text" *ngIf="!latitude || !longitude">
           Localização Pendente
@@ -44,11 +46,23 @@
       </ion-button>
     </ion-item>
 
+    <div class="location-name-container ion-padding-horizontal ion-padding-bottom" *ngIf="latitude && longitude && privacyLevel == 1">
+      <ion-button *ngIf="!locationName" fill="outline" shape="round" size="small" class="add-location-name-btn"
+        (click)="openLocationSearch()">
+        📍 Adicionar Nome do Local (Opcional)
+      </ion-button>
+      <ion-chip *ngIf="locationName" color="primary" class="selected-location-chip" (click)="openLocationSearch()">
+        <ion-icon name="pin"></ion-icon>
+        <ion-label>{{ locationName }}</ion-label>
+        <ion-icon name="close-circle" (click)="clearLocationName(); $event.stopPropagation();"></ion-icon>
+      </ion-chip>
+    </div>
+
     <ion-item class="setting-item">
       <ion-icon name="eye-outline" slot="start" color="medium"></ion-icon>
       <ion-select justify="space-between" label="Precisão Geográfica" [(ngModel)]="privacyLevel">
-        <ion-select-option [value]="1">Exata (Local Perfeito)</ion-select-option>
-        <ion-select-option [value]="2">Região (Raio de ~5km)</ion-select-option>
+        <ion-select-option [value]="1">Localização exata</ion-select-option>
+        <ion-select-option [value]="2">Região aproximada</ion-select-option>
         <ion-select-option [value]="3">Macro (Apenas País/Estado)</ion-select-option>
       </ion-select>
     </ion-item>
@@ -83,5 +97,54 @@
       <ion-icon *ngIf="!isUploading" name="paper-plane-outline" slot="end"></ion-icon>
     </ion-button>
   </div>
+
+  <ion-modal [isOpen]="isSearchModalOpen" (didDismiss)="closeLocationSearch()" initialBreakpoint="0.75"
+    [breakpoints]="[0, 0.75, 1]">
+    <ng-template>
+      <ion-header class="ion-no-border">
+        <ion-toolbar>
+          <ion-title>Buscar Local</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="closeLocationSearch()">Fechar</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+        <ion-toolbar>
+          <ion-searchbar placeholder="Ex: Museu do Ipiranga, Parque do Ibirapuera..." (ionInput)="searchPlaces($event)"
+            [debounce]="500"></ion-searchbar>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content>
+        <div class="ion-padding ion-text-center" *ngIf="isSearchingPlaces">
+          <ion-spinner name="crescent"></ion-spinner>
+          <p>Buscando locais próximos (até 15km)...</p>
+        </div>
+
+        <ion-list *ngIf="!isSearchingPlaces">
+          <ion-item *ngFor="let place of searchResults" (click)="selectPlace(place)" [disabled]="place.tooFar"
+            [button]="!place.tooFar" detail="false">
+            <ion-icon name="location" slot="start" [color]="place.tooFar ? 'medium' : 'primary'"></ion-icon>
+            <ion-label class="ion-text-wrap">
+              <h2>{{ place.name }}</h2>
+              <p style="font-size: 0.8rem; color: var(--ion-color-step-600)">{{ place.address }}</p>
+              <p *ngIf="place.tooFar" class="error-text"
+                style="color: var(--ion-color-danger); font-size: 0.8rem; margin-top: 4px;">
+                <ion-icon name="warning-outline"></ion-icon> Muito distante ({{ place.distanceKm | number:'1.1-1' }}km).
+                O máximo é 15km.
+              </p>
+              <p *ngIf="!place.tooFar" style="font-size: 0.8rem; color: var(--ion-color-success); margin-top: 4px;">
+                <ion-icon name="navigate-circle-outline"></ion-icon> A {{ place.distanceKm | number:'1.1-1' }}km daqui
+              </p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+
+        <div class="ion-padding ion-text-center"
+          *ngIf="!isSearchingPlaces && searchResults.length === 0 && hasSearched">
+          <p style="color: var(--ion-color-step-500)">Nenhum local encontrado perto de você.<br>Tente ser mais
+            específico.</p>
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
 
 </ion-content>

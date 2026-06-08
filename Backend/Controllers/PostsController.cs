@@ -37,6 +37,7 @@ namespace Backend.Controllers
             public PrivacyLevel PrivacyLevel { get; set; }
             public string? Latitude { get; set; }
             public string? Longitude { get; set; }
+            public string? LocationName { get; set; }
             public bool IncludedInPassport { get; set; } = true;
             public bool IsPublic { get; set; } = true;
         }
@@ -101,7 +102,18 @@ namespace Backend.Controllers
                     if (!string.IsNullOrWhiteSpace(geoResult.Country))
                         parts.Add(geoResult.Country);
 
-                    post.LocationName = string.Join(", ", parts);
+                    if (!string.IsNullOrWhiteSpace(request.LocationName))
+                    {
+                        post.LocationName = request.LocationName;
+                        if (parts.Count > 0)
+                        {
+                            post.LocationName += $", {parts.First()}";
+                        }
+                    }
+                    else
+                    {
+                        post.LocationName = string.Join(", ", parts);
+                    }
 
                     // Badge Hierarchy (Country -> State -> City)
                     Badge? countryBadge = null, stateBadge = null, cityBadge = null;

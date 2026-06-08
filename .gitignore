@@ -38,6 +38,7 @@ Backend/secrets.json
 
 # Entity Framework migration transaction/logs (if any local log files exist)
 *.log
+Backend/aws-logger-errors.txt
 
 # ==============================================================================
 # FRONTEND (Node.js / Angular / Ionic)

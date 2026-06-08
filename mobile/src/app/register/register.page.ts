@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
-import { ToastController } from '@ionic/angular';
+import { ToastController, AlertController } from '@ionic/angular';
 import { AuthService } from '../services/auth.service';
+import { BiometricAuth } from '@aparajita/capacitor-biometric-auth';
 
 @Component({
   selector: 'app-register',
@@ -76,7 +77,8 @@ export class RegisterPage implements OnInit {
   constructor(
     private authService: AuthService,
     private router: Router,
-    private toastCtrl: ToastController
+    private toastCtrl: ToastController,
+    private alertCtrl: AlertController
   ) { }
 
   ngOnInit() {
@@ -127,8 +129,34 @@ export class RegisterPage implements OnInit {
     }
 
     this.authService.register(formData).subscribe({
-      next: (res) => {
+      next: async (res) => {
         this.isLoading = false;
+
+        try {
+          const result = await BiometricAuth.checkBiometry();
+          if (result.isAvailable) {
+            const alert = await this.alertCtrl.create({
+              header: 'Ativar Biometria?',
+              message: 'Deseja usar sua biometria (FaceID/Digital) para entrar mais rápido nas próximas vezes?',
+              buttons: [
+                { text: 'Não', role: 'cancel' },
+                { 
+                  text: 'Sim', 
+                  handler: () => {
+                    this.authService.setBiometricsEnabled(true);
+                    localStorage.setItem('biometric_email', this.email);
+                    localStorage.setItem('biometric_password', this.password);
+                  }
+                }
+              ]
+            });
+            await alert.present();
+            await alert.onDidDismiss();
+          }
+        } catch (e) {
+          console.error('Erro ao verificar biometria no registro', e);
+        }
+
         this.router.navigate(['/tabs/home']);
       },
       error: async (err) => {

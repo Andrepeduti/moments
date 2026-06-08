@@ -2,6 +2,7 @@ import { environment } from '../../environments/environment';
 import { Component, OnInit } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { ProfileService } from '../services/profile.service';
+import { filter, take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-edit-profile',
@@ -69,7 +70,10 @@ export class EditProfilePage implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.profileService.profile$.subscribe(profile => {
+    this.profileService.profile$.pipe(
+      filter(profile => !!profile),
+      take(1)
+    ).subscribe(profile => {
       // Fazemos uma cópia para poder editar no form sem alterar o estado global até salvar
       this.profileData = { ...profile };
     });
@@ -93,8 +97,6 @@ export class EditProfilePage implements OnInit {
       this.profileService.uploadProfilePicture(file).subscribe({
         next: (res: any) => {
           this.profileData.profilePictureUrl = res.profilePictureUrl;
-          // Também atualiza globalmente para as outras páginas
-          this.profileService.updateProfile({ profilePictureUrl: res.profilePictureUrl });
         },
         error: (err) => console.error('Erro ao enviar foto', err)
       });

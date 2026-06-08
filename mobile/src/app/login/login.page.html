@@ -23,6 +23,11 @@
       <ion-button expand="block" shape="round" type="submit" class="login-btn" [disabled]="!loginForm.form.valid">
         Entrar
       </ion-button>
+
+      <ion-button *ngIf="isBiometricAvailable && authService.isBiometricsEnabled" expand="block" fill="clear" shape="round" class="biometric-btn" (click)="loginWithBiometrics()" type="button">
+        <ion-icon slot="start" name="finger-print-outline"></ion-icon>
+        Entrar com FaceID / Digital
+      </ion-button>
     </form>
 
     <div class="register-link-container">

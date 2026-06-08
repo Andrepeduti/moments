@@ -11,7 +11,20 @@ export class AuthService {
   private tokenSubject = new BehaviorSubject<string | null>(localStorage.getItem('token'));
   public token$ = this.tokenSubject.asObservable();
 
+  // Biometrics State
+  private biometricsSubject = new BehaviorSubject<boolean>(localStorage.getItem('biometricsEnabled') === 'true');
+  public biometricsEnabled$ = this.biometricsSubject.asObservable();
+
   constructor(private http: HttpClient) {}
+
+  get isBiometricsEnabled(): boolean {
+    return this.biometricsSubject.value;
+  }
+
+  setBiometricsEnabled(enabled: boolean) {
+    localStorage.setItem('biometricsEnabled', enabled.toString());
+    this.biometricsSubject.next(enabled);
+  }
 
   login(credentials: any) {
     return this.http.post<any>(`${this.apiUrl}/login`, credentials).pipe(

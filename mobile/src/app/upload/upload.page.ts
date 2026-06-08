@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { Geolocation } from '@capacitor/geolocation';
 import { ToastController } from '@ionic/angular';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-upload',
@@ -23,6 +24,14 @@ export class UploadPage {
 
   latitude: number | null = null;
   longitude: number | null = null;
+  locationName: string | null = null;
+  autoLocationInfo: { city: string, state: string, country: string } | null = null;
+  isGeocoding: boolean = false;
+
+  isSearchModalOpen: boolean = false;
+  isSearchingPlaces: boolean = false;
+  hasSearched: boolean = false;
+  searchResults: any[] = [];
 
   constructor(
     private postService: PostService, 
@@ -63,6 +72,8 @@ export class UploadPage {
       const coordinates = await Geolocation.getCurrentPosition({ enableHighAccuracy: true });
       this.latitude = coordinates.coords.latitude;
       this.longitude = coordinates.coords.longitude;
+      
+      this.fetchAutoLocationName();
     } catch (e) {
       const toast = await this.toastCtrl.create({
         message: 'Erro ao obter localização. Verifique se você deu permissão no navegador!',
@@ -73,6 +84,36 @@ export class UploadPage {
     } finally {
       this.isLocating = false;
     }
+  }
+
+  async fetchAutoLocationName() {
+    if (!this.latitude || !this.longitude) return;
+    this.isGeocoding = true;
+    try {
+      const response = await fetch(`${environment.apiUrl}/places/reverse?lat=${this.latitude}&lon=${this.longitude}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      if (response.ok) {
+        this.autoLocationInfo = await response.json();
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      this.isGeocoding = false;
+    }
+  }
+
+  get displayLocation(): string {
+    if (!this.autoLocationInfo) return 'Local Desconhecido';
+
+    const parts = [];
+    if (this.privacyLevel == 1 && this.autoLocationInfo.city) parts.push(this.autoLocationInfo.city);
+    if ((this.privacyLevel == 1 || this.privacyLevel == 2) && this.autoLocationInfo.state) parts.push(this.autoLocationInfo.state);
+    if (this.autoLocationInfo.country) parts.push(this.autoLocationInfo.country);
+
+    return parts.join(', ') || 'Terras Longínquas';
   }
 
   async sharePost() {
@@ -105,6 +146,9 @@ export class UploadPage {
     formData.append('IncludedInPassport', this.includeInPassport.toString());
     formData.append('Latitude', this.latitude.toString());
     formData.append('Longitude', this.longitude.toString());
+    if (this.locationName) {
+      formData.append('LocationName', this.locationName);
+    }
     formData.append('File', this.selectedImageBlob, 'meu_momento.jpg');
 
     localStorage.setItem('default_post_visibility', this.isPublic.toString());
@@ -129,5 +173,94 @@ export class UploadPage {
         console.error(err);
       }
     });
+  }
+
+  // --- Location Search Logic ---
+
+  getDistanceFromLatLonInKm(lat1: number, lon1: number, lat2: number, lon2: number) {
+    const R = 6371; // Radius of the earth in km
+    const dLat = this.deg2rad(lat2 - lat1);
+    const dLon = this.deg2rad(lon2 - lon1);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(this.deg2rad(lat1)) * Math.cos(this.deg2rad(lat2)) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c; // Distance in km
+  }
+
+  deg2rad(deg: number) {
+    return deg * (Math.PI / 180);
+  }
+
+  openLocationSearch() {
+    this.isSearchModalOpen = true;
+    this.searchResults = [];
+    this.hasSearched = false;
+  }
+
+  closeLocationSearch() {
+    this.isSearchModalOpen = false;
+  }
+
+  clearLocationName() {
+    this.locationName = null;
+  }
+
+  async searchPlaces(event: any) {
+    const query = event.target.value?.trim();
+    if (!query || query.length < 3) {
+      this.searchResults = [];
+      this.hasSearched = false;
+      return;
+    }
+
+    if (!this.latitude || !this.longitude) return;
+
+    this.isSearchingPlaces = true;
+    this.hasSearched = true;
+
+    try {
+      const response = await fetch(`${environment.apiUrl}/places/search?q=${encodeURIComponent(query)}&lat=${this.latitude}&lon=${this.longitude}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch places');
+      }
+
+      const data = await response.json();
+
+      this.searchResults = data.map((item: any) => {
+        const placeLat = parseFloat(item.lat);
+        const placeLon = parseFloat(item.lon);
+        const distance = this.getDistanceFromLatLonInKm(this.latitude!, this.longitude!, placeLat, placeLon);
+        
+        return {
+          id: item.id,
+          name: item.name,
+          address: item.address,
+          lat: placeLat,
+          lon: placeLon,
+          distanceKm: distance,
+          tooFar: distance > 15 // 15km Radius Rule
+        };
+      }).sort((a: any, b: any) => a.distanceKm - b.distanceKm);
+
+    } catch (e) {
+      console.error('Error fetching places', e);
+    } finally {
+      this.isSearchingPlaces = false;
+    }
+  }
+
+  selectPlace(place: any) {
+    if (place.tooFar) return;
+    this.locationName = place.name;
+    this.latitude = place.lat;
+    this.longitude = place.lon;
+    this.closeLocationSearch();
   }
 }
