@@ -1,5 +1,6 @@
 .feed-container {
   padding: 16px;
+  padding-bottom: 120px; /* Garante que as postagens não fiquem escondidas debaixo da barra de abas */
   display: flex;
   flex-direction: column;
   align-items: center;

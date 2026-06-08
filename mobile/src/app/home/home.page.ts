@@ -4,6 +4,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { PostService } from '../services/post.service';
 import { FriendService } from '../services/friend.service';
 import { Subscription } from 'rxjs';
+import { Geolocation } from '@capacitor/geolocation';
 
 @Component({
   selector: 'app-home',
@@ -43,8 +44,16 @@ export class HomePage implements OnDestroy {
   }
 
   async getUserLocation() {
-    this.userLat = -23.5505;
-    this.userLon = -46.6333;
+    try {
+      const coordinates = await Geolocation.getCurrentPosition({ enableHighAccuracy: true, timeout: 5000 });
+      this.userLat = coordinates.coords.latitude;
+      this.userLon = coordinates.coords.longitude;
+    } catch (e) {
+      console.warn('Erro ao obter localização do usuário para cálculo de distância', e);
+      // Fallback silencioso (SP), ou podemos deixar null
+      this.userLat = -23.5505;
+      this.userLon = -46.6333;
+    }
   }
 
   loadFeed(event?: any) {
