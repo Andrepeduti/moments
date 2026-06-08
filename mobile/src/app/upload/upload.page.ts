@@ -68,15 +68,24 @@ export class UploadPage {
   async getLocation() {
     this.isLocating = true;
     try {
+      const permissions = await Geolocation.checkPermissions();
+      if (permissions.location !== 'granted') {
+        const request = await Geolocation.requestPermissions();
+        if (request.location !== 'granted') {
+          throw new Error('Permissão de localização negada pelo usuário');
+        }
+      }
+
       // Captura a localização REAL do GPS do celular ou do navegador!
-      const coordinates = await Geolocation.getCurrentPosition({ enableHighAccuracy: true });
+      const coordinates = await Geolocation.getCurrentPosition({ enableHighAccuracy: true, timeout: 10000 });
       this.latitude = coordinates.coords.latitude;
       this.longitude = coordinates.coords.longitude;
       
       this.fetchAutoLocationName();
     } catch (e) {
+      console.error('Erro de GPS:', e);
       const toast = await this.toastCtrl.create({
-        message: 'Erro ao obter localização. Verifique se você deu permissão no navegador!',
+        message: 'Erro ao obter localização. Verifique o GPS do aparelho e as permissões!',
         duration: 4000,
         color: 'danger'
       });
