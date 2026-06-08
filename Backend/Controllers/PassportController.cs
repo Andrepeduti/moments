@@ -92,14 +92,14 @@ namespace Backend.Controllers
 
             // Include photos archived under this badge or its children
             var descendantBadgeIds = await _context.Badges
-                .Where(b => b.Id == badgeId || b.ParentBadgeId == badgeId || b.ParentBadge.ParentBadgeId == badgeId)
+                .Where(b => b.Id == badgeId || b.ParentBadgeId == badgeId || (b.ParentBadge != null && b.ParentBadge.ParentBadgeId == badgeId))
                 .Select(b => b.Id)
                 .ToListAsync();
 
             var photos = await _context.Posts
                 .Where(p => p.UserId == targetUserId && p.IncludedInPassport && p.BadgeId.HasValue && descendantBadgeIds.Contains(p.BadgeId.Value) && !p.IsHidden)
                 .Include(p => p.Badge)
-                .ThenInclude(b => b.ParentBadge)
+                .ThenInclude(b => b!.ParentBadge)
                 .OrderByDescending(p => p.CreatedAt)
                 .Select(p => new { 
                     p.Id, 

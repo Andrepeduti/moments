@@ -146,11 +146,11 @@ namespace Backend.Controllers
                     // Link the badge according to the chosen PrivacyLevel
                     if (request.IncludedInPassport)
                     {
-                        if (request.PrivacyLevel == 3) // Macro (Country)
+                        if (request.PrivacyLevel == PrivacyLevel.Macro) // Macro (Country)
                         {
                             post.BadgeId = countryBadge?.Id;
                         }
-                        else if (request.PrivacyLevel == 2) // Approximate (State)
+                        else if (request.PrivacyLevel == PrivacyLevel.Region) // Approximate (State)
                         {
                             post.BadgeId = stateBadge?.Id ?? countryBadge?.Id;
                         }
