@@ -143,10 +143,21 @@ namespace Backend.Controllers
                         await UnlockBadgeForUser(userId, cityBadge.Id);
                     }
 
-                    // Link the most specific badge to the post if included in passport
+                    // Link the badge according to the chosen PrivacyLevel
                     if (request.IncludedInPassport)
                     {
-                        post.BadgeId = cityBadge?.Id ?? stateBadge?.Id ?? countryBadge?.Id;
+                        if (request.PrivacyLevel == 3) // Macro (Country)
+                        {
+                            post.BadgeId = countryBadge?.Id;
+                        }
+                        else if (request.PrivacyLevel == 2) // Approximate (State)
+                        {
+                            post.BadgeId = stateBadge?.Id ?? countryBadge?.Id;
+                        }
+                        else // Exact (City)
+                        {
+                            post.BadgeId = cityBadge?.Id ?? stateBadge?.Id ?? countryBadge?.Id;
+                        }
                     }
                 }
                 else if (geoResult != null && geoResult.IsOcean)
