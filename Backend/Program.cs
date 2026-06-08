@@ -55,7 +55,9 @@ else
 {
     builder.Services.AddScoped<IStorageService, S3StorageService>();
 }
-builder.Services.AddScoped<IGeocodingService, NominatimGeocodingService>();
+
+// Geocoding Service (Google Maps)
+builder.Services.AddScoped<IGeocodingService, GoogleGeocodingService>();
 
 // Setup DbContext with PostGIS support
 builder.Services.AddDbContext<AppDbContext>(options => 
