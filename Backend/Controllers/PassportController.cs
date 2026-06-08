@@ -75,13 +75,25 @@ namespace Backend.Controllers
             var badge = await _context.Badges.FindAsync(badgeId);
             if (badge == null) return NotFound();
 
-            // Rarity stats: global count of users who unlocked this badge
-            var unlockCount = await _context.UserBadges.CountAsync(ub => ub.BadgeId == badgeId);
+            // Separate counts by rarity
+            var baseCount = await _context.UserBadges.CountAsync(ub => ub.BadgeId == badgeId && !ub.IsPioneer);
+            var pioneerCount = await _context.UserBadges.CountAsync(ub => ub.BadgeId == badgeId && ub.IsPioneer);
             var totalUsers = await _context.Users.CountAsync();
             
-            var percentage = totalUsers > 0 ? Math.Round(((double)unlockCount / totalUsers) * 100, 1) : 0;
+            var percentage = totalUsers > 0 ? Math.Round(((double)baseCount / totalUsers) * 100, 1) : 0;
 
-            return Ok(new { badge.Id, badge.Name, badge.Type, UnlockCount = unlockCount, TotalUsers = totalUsers, Percentage = percentage });
+            var totalPioneers = await _context.UserBadges.CountAsync(ub => ub.IsPioneer);
+
+            return Ok(new { 
+                badge.Id, 
+                badge.Name, 
+                badge.Type, 
+                UnlockCount = baseCount, // Use baseCount as the default for the base seal
+                PioneerCount = pioneerCount,
+                TotalUsers = totalUsers, 
+                Percentage = percentage, 
+                TotalPioneers = totalPioneers 
+            });
         }
 
         [HttpGet("badge/{badgeId}/photos")]

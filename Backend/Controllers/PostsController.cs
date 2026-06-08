@@ -243,18 +243,8 @@ namespace Backend.Controllers
             var yesterday = DateTime.UtcNow.AddDays(-1);
             var query = _context.Posts
                 .Include(p => p.User)
-                .Where(p => !p.IsHidden && p.CreatedAt >= yesterday && p.IsPublic);
-
-            if (lat.HasValue && lon.HasValue)
-            {
-                var point = new Point(lon.Value, lat.Value) { SRID = 4326 };
-                // Sort by distance (nearest first)
-                query = query.OrderBy(p => p.Location != null ? p.Location.Distance(point) : double.MaxValue);
-            }
-            else
-            {
-                query = query.OrderByDescending(p => p.CreatedAt);
-            }
+                .Where(p => !p.IsHidden && p.CreatedAt >= yesterday && p.IsPublic)
+                .OrderByDescending(p => p.CreatedAt);
 
             var posts = await query.Take(50).Select(p => new {
                 p.Id,

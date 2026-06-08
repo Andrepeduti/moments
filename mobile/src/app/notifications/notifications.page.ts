@@ -59,7 +59,7 @@ export class NotificationsPage {
   }
 
   getProfileImageUrl(url: string | undefined): string {
-    if (!url) return 'https://i.pravatar.cc/150?img=11';
+    if (!url) return 'https://ionicframework.com/docs/img/demos/avatar.svg';
     if (url.startsWith('http')) return url;
     return `${environment.baseUrl}${url}`;
   }

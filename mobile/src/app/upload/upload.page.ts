@@ -49,6 +49,7 @@ export class UploadPage {
       const image = await Camera.getPhoto({
         quality: 90,
         allowEditing: false,
+        correctOrientation: true,
         resultType: CameraResultType.Uri,
         source: CameraSource.Prompt // Abre popup no web/celular perguntando: Câmera ou Galeria?
       });
@@ -183,6 +184,8 @@ export class UploadPage {
         this.selectedImageBlob = null;
         this.latitude = null;
         this.longitude = null;
+        this.locationName = null;
+        this.autoLocationInfo = null;
         this.router.navigate(['/']); // Volta pro Feed
       },
       error: async (err) => {

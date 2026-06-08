@@ -14,7 +14,7 @@ export class ProfileService {
     name: '...',
     bio: '...',
     nationality: '...',
-    profilePictureUrl: 'https://i.pravatar.cc/150?img=11'
+    profilePictureUrl: 'https://ionicframework.com/docs/img/demos/avatar.svg'
   };
 
   private profileSubject = new BehaviorSubject<any>(this.profileObj);
@@ -29,7 +29,7 @@ export class ProfileService {
           name: '...',
           bio: '...',
           nationality: '...',
-          profilePictureUrl: 'https://i.pravatar.cc/150?img=11'
+          profilePictureUrl: 'https://ionicframework.com/docs/img/demos/avatar.svg'
         };
         this.profileSubject.next(this.profileObj);
       }
