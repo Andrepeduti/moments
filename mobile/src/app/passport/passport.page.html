@@ -175,45 +175,52 @@
         <ion-content class="ion-padding collection-content" color="light">
 
 
-          <div *ngFor="let state of selectedCountry?.states" class="state-collection">
-            <div class="state-header" *ngIf="getPhotosForState(state.id, selectedCountry?.photos).length > 0">
-              <ion-icon name="location-outline" color="primary"></ion-icon>
-              <h3 class="state-title">{{ state.name }}</h3>
-            </div>
-
-            <div class="photos-grid">
-              <div *ngFor="let photo of getPhotosForState(state.id, selectedCountry?.photos)" class="photo-item"
-                (click)="expandImage(photo)">
-                <img
-                  [src]="photo.imageUrl ? getImageUrl(photo.imageUrl) : 'https://picsum.photos/150/150?random=' + photo.id" />
-                <div class="photo-location">{{ photo.locationName }}</div>
-              </div>
-            </div>
+          <div *ngIf="isModalLoading" class="loading-state" style="margin-top: 40px;">
+            <ion-spinner name="crescent" color="primary"></ion-spinner>
+            <p>Carregando memórias...</p>
           </div>
 
-          <!-- Fotos em nível de país ou selos especiais (sem estado) -->
-          <div
-            *ngIf="getCountryLevelPhotos(selectedCountry?.photos).length > 0 || (!isModalLoading && selectedCountry?.photos?.length === 0)"
-            class="state-collection">
-            <div class="state-header"
-              *ngIf="selectedCountry?.states?.length > 0 && getCountryLevelPhotos(selectedCountry?.photos).length > 0">
-              <ion-icon name="globe-outline" color="primary"></ion-icon>
-              <h3 class="state-title">Geral</h3>
-            </div>
+          <ng-container *ngIf="!isModalLoading">
+            <div *ngFor="let state of selectedCountry?.states" class="state-collection">
+              <div class="state-header" *ngIf="getPhotosForState(state.id, selectedCountry?.photos).length > 0">
+                <ion-icon name="location-outline" color="primary"></ion-icon>
+                <h3 class="state-title">{{ state.name }}</h3>
+              </div>
 
-            <div class="photos-grid">
-              <div *ngFor="let photo of getCountryLevelPhotos(selectedCountry?.photos)" class="photo-item"
-                (click)="expandImage(photo)">
-                <img
-                  [src]="photo.imageUrl ? getImageUrl(photo.imageUrl) : 'https://picsum.photos/150/150?random=' + photo.id" />
-                <div class="photo-location">{{ photo.locationName }}</div>
+              <div class="photos-grid">
+                <div *ngFor="let photo of getPhotosForState(state.id, selectedCountry?.photos)" class="photo-item"
+                  (click)="expandImage(photo)">
+                  <img
+                    [src]="photo.imageUrl ? getImageUrl(photo.imageUrl) : 'https://picsum.photos/150/150?random=' + photo.id" />
+                  <div class="photo-location">{{ photo.locationName }}</div>
+                </div>
               </div>
             </div>
 
-            <div *ngIf="!isModalLoading && selectedCountry?.photos?.length === 0" class="empty-state-small">
-              Nenhuma foto arquivada neste selo ainda.
+            <!-- Fotos em nível de país ou selos especiais (sem estado) -->
+            <div
+              *ngIf="getCountryLevelPhotos(selectedCountry?.photos).length > 0 || selectedCountry?.photos?.length === 0"
+              class="state-collection">
+              <div class="state-header"
+                *ngIf="selectedCountry?.states?.length > 0 && getCountryLevelPhotos(selectedCountry?.photos).length > 0">
+                <ion-icon name="globe-outline" color="primary"></ion-icon>
+                <h3 class="state-title">Geral</h3>
+              </div>
+
+              <div class="photos-grid">
+                <div *ngFor="let photo of getCountryLevelPhotos(selectedCountry?.photos)" class="photo-item"
+                  (click)="expandImage(photo)">
+                  <img
+                    [src]="photo.imageUrl ? getImageUrl(photo.imageUrl) : 'https://picsum.photos/150/150?random=' + photo.id" />
+                  <div class="photo-location">{{ photo.locationName }}</div>
+                </div>
+              </div>
+
+              <div *ngIf="selectedCountry?.photos?.length === 0" class="empty-state-small">
+                Nenhuma foto arquivada neste selo ainda.
+              </div>
             </div>
-          </div>
+          </ng-container>
 
         </ion-content>
 

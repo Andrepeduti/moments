@@ -161,8 +161,18 @@ export class RegisterPage implements OnInit {
       },
       error: async (err) => {
         this.isLoading = false;
+        
+        let errorMsg = 'Erro ao registrar. Tente outro usuário ou email.';
+        if (err.error && typeof err.error === 'string') {
+          errorMsg = err.error;
+        } else if (err.error && err.error.title) {
+          errorMsg = err.error.title;
+        } else if (err.error && err.error.message) {
+          errorMsg = err.error.message;
+        }
+
         const toast = await this.toastCtrl.create({
-          message: err.error || 'Erro ao registrar. Tente outro usuário ou email.',
+          message: errorMsg,
           duration: 3000,
           color: 'danger'
         });
