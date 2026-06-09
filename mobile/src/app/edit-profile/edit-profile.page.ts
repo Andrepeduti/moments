@@ -91,14 +91,26 @@ export class EditProfilePage implements OnInit {
     return `${environment.baseUrl}${url}`;
   }
 
+  temporaryImageUrl: string | null = null;
+  isUploadingPhoto: boolean = false;
+
   onFileSelected(event: any) {
     const file = event.target.files[0];
     if (file) {
+      this.isUploadingPhoto = true;
+      // Show local preview immediately before upload finishes
+      this.temporaryImageUrl = URL.createObjectURL(file);
+
       this.profileService.uploadProfilePicture(file).subscribe({
         next: (res: any) => {
           this.profileData.profilePictureUrl = res.profilePictureUrl;
+          this.isUploadingPhoto = false;
         },
-        error: (err) => console.error('Erro ao enviar foto', err)
+        error: (err) => {
+          console.error('Erro ao enviar foto', err);
+          this.isUploadingPhoto = false;
+          this.temporaryImageUrl = null; // Revert if failed
+        }
       });
     }
   }

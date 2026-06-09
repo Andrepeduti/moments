@@ -15,14 +15,17 @@
 <ion-content class="ion-padding" color="light">
   
   <div class="edit-avatar-section">
-    <ion-avatar class="edit-avatar" (click)="fileInput.click()">
-      <img [src]="getImageUrl(profileData.profilePictureUrl)" />
+    <ion-avatar class="edit-avatar" (click)="!isUploadingPhoto && fileInput.click()">
+      <img [src]="temporaryImageUrl ? temporaryImageUrl : getImageUrl(profileData.profilePictureUrl)" />
       <div class="avatar-overlay">
-        <ion-icon name="camera-outline"></ion-icon>
+        <ion-spinner *ngIf="isUploadingPhoto" name="crescent" color="light"></ion-spinner>
+        <ion-icon *ngIf="!isUploadingPhoto" name="camera-outline"></ion-icon>
       </div>
     </ion-avatar>
-    <p class="change-photo-text" color="primary" (click)="fileInput.click()">Alterar foto</p>
-    <input type="file" #fileInput hidden accept="image/*" (change)="onFileSelected($event)">
+    <p class="change-photo-text" color="primary" (click)="!isUploadingPhoto && fileInput.click()">
+      {{ isUploadingPhoto ? 'Enviando...' : 'Alterar foto' }}
+    </p>
+    <input type="file" #fileInput hidden accept="image/*" (change)="onFileSelected($event)" [disabled]="isUploadingPhoto">
   </div>
 
   <div class="form-container">
